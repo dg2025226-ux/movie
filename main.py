@@ -81,3 +81,115 @@ st.plotly_chart(fig_treemap, use_container_width=True)
 st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 
 st.divider()
+
+# ------------------------------------------------------------
+# 3. 총 관객 히스토그램
+# ------------------------------------------------------------
+st.header("3. 총 관객 분포 (히스토그램)")
+
+fig_hist = px.histogram(
+    df,
+    x="total_audi",
+    nbins=30,
+)
+fig_hist.update_traces(
+    hovertemplate="관객 구간: %{x}<br>편수: %{y}편<extra></extra>",
+)
+fig_hist.update_layout(
+    xaxis_title="총 관객 수",
+    yaxis_title="영화 편수",
+)
+
+st.plotly_chart(fig_hist, use_container_width=True)
+
+# 가장 관객이 몰린 구간과, 관객이 가장 많은 영화 계산
+hist_counts, hist_edges = pd.cut(df["total_audi"], bins=30, retbins=True)
+mode_bin = hist_counts.value_counts().idxmax()
+top_movie_row = df.loc[df["total_audi"].idxmax()]
+
+st.markdown(
+    f"**🔍 이 그래프로 알 수 있는 것:** 대부분의 영화는 총 관객 "
+    f"**{int(mode_bin.left):,}명 ~ {int(mode_bin.right):,}명** 구간에 몰려 있고, "
+    f"총 관객이 가장 많은 영화는 **'{top_movie_row['movieNm']}'** "
+    f"(총 관객 {int(top_movie_row['total_audi']):,}명)입니다."
+)
+
+st.divider()
+
+# ------------------------------------------------------------
+# 4. 개봉일 스크린수 vs 총 관객 - 산점도
+# ------------------------------------------------------------
+st.header("4. 개봉일 스크린수와 총 관객의 관계 (산점도)")
+
+fig_scatter = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    color="genre",
+    hover_name="movieNm",
+)
+fig_scatter.update_layout(
+    xaxis_title="개봉일 스크린수",
+    yaxis_title="총 관객 수",
+)
+
+st.plotly_chart(fig_scatter, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 5. 장르별 총 관객 - 박스플롯 (10편 이상 장르만)
+# ------------------------------------------------------------
+st.header("5. 장르별 총 관객 분포 (박스플롯)")
+
+genre_movie_counts = df["genre"].value_counts()
+major_genres = genre_movie_counts[genre_movie_counts >= 10].index
+df_major_genre = df[df["genre"].isin(major_genres)]
+
+fig_box = px.box(
+    df_major_genre,
+    x="genre",
+    y="total_audi",
+    points="outliers",
+    hover_data={"movieNm": True},
+)
+fig_box.update_traces(
+    hovertemplate="영화명: %{customdata[0]}<br>총 관객: %{y:,}명<extra></extra>",
+)
+fig_box.update_layout(
+    xaxis_title="장르 (영화 10편 이상)",
+    yaxis_title="총 관객 수",
+)
+
+st.plotly_chart(fig_box, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
+
+# ------------------------------------------------------------
+# 6. 개봉일 스크린수 vs 총 관객 - 버블 그래프 (크기: 첫 주 관객)
+# ------------------------------------------------------------
+st.header("6. 개봉일 스크린수와 총 관객의 관계 (버블 그래프)")
+
+fig_bubble = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    size="first_week_audi",
+    color="genre",
+    hover_name="movieNm",
+    size_max=40,
+)
+fig_bubble.update_layout(
+    xaxis_title="개봉일 스크린수",
+    yaxis_title="총 관객 수",
+)
+
+st.plotly_chart(fig_bubble, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
