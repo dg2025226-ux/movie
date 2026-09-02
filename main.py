@@ -193,3 +193,27 @@ st.plotly_chart(fig_bubble, use_container_width=True)
 st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 
 st.divider()
+
+# ------------------------------------------------------------
+# 7. 제작 국가 → 장르 - 선버스트 그래프
+# ------------------------------------------------------------
+st.header("7. 제작 국가별 장르 구성 (선버스트)")
+
+nation_genre_counts = (
+    df.groupby(["nation", "genre"]).size().reset_index(name="count")
+)
+
+fig_sunburst = px.sunburst(
+    nation_genre_counts,
+    path=["nation", "genre"],
+    values="count",
+)
+fig_sunburst.update_traces(
+    hovertemplate="%{label}<br>편수: %{value}편<extra></extra>",
+)
+
+st.plotly_chart(fig_sunburst, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
