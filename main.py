@@ -217,3 +217,31 @@ st.plotly_chart(fig_sunburst, use_container_width=True)
 st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 
 st.divider()
+
+# ------------------------------------------------------------
+# 8. 장르 top3 - 막대 그래프
+# ------------------------------------------------------------
+st.header("8. 영화 편수 상위 3개 장르 (막대 그래프)")
+
+top3_genre_counts = df["genre"].value_counts().reset_index().head(3)
+top3_genre_counts.columns = ["genre", "count"]
+
+fig_bar_top3 = px.bar(
+    top3_genre_counts,
+    x="genre",
+    y="count",
+    text="count",
+)
+fig_bar_top3.update_traces(
+    hovertemplate="%{x}<br>편수: %{y}편<extra></extra>",
+)
+fig_bar_top3.update_layout(
+    xaxis_title="장르",
+    yaxis_title="영화 편수",
+)
+
+st.plotly_chart(fig_bar_top3, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
