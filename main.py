@@ -60,3 +60,24 @@ st.plotly_chart(fig_genre, use_container_width=True)
 st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 
 st.divider()
+
+# ------------------------------------------------------------
+# 2. 장르 안 영화별 총 관객 - 트리맵
+# ------------------------------------------------------------
+st.header("2. 장르별 영화의 총 관객 (트리맵)")
+
+fig_treemap = px.treemap(
+    df,
+    path=[px.Constant("전체"), "genre", "movieNm"],
+    values="total_audi",
+)
+fig_treemap.update_traces(
+    hovertemplate="영화명: %{label}<br>총 관객: %{value:,}명<extra></extra>",
+)
+fig_treemap.update_layout(margin=dict(t=30, l=10, r=10, b=10))
+
+st.plotly_chart(fig_treemap, use_container_width=True)
+
+st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
+
+st.divider()
