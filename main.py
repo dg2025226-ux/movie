@@ -224,24 +224,31 @@ st.divider()
 st.header("8. 영화 편수 상위 3개 장르의 영화별 총 관객 (산점도)")
 
 top3_genres = df["genre"].value_counts().head(3).index.tolist()
-df_top3_genre = df[df["genre"].isin(top3_genres)].sort_values(
-    ["genre", "total_audi"], ascending=[True, False]
+df_top3_genre = df[df["genre"].isin(top3_genres)].copy()
+
+# 장르별로, 총 관객이 많은 영화가 위로 오도록 정렬
+df_top3_genre = df_top3_genre.sort_values(["genre", "total_audi"], ascending=[True, True])
+df_top3_genre["movieNm"] = pd.Categorical(
+    df_top3_genre["movieNm"], categories=df_top3_genre["movieNm"], ordered=True
 )
 
 fig_scatter_top3 = px.scatter(
     df_top3_genre,
-    x="movieNm",
-    y="total_audi",
+    x="total_audi",
+    y="movieNm",
     color="genre",
+    facet_col="genre",
 )
 fig_scatter_top3.update_traces(
-    marker=dict(size=12),
-    hovertemplate="영화명: %{x}<br>총 관객: %{y:,}명<extra></extra>",
+    marker=dict(size=10),
+    hovertemplate="영화명: %{y}<br>총 관객: %{x:,}명<extra></extra>",
 )
+fig_scatter_top3.update_xaxes(matches=None, title_text="총 관객 수")
+fig_scatter_top3.update_yaxes(matches=None, title_text="")
+fig_scatter_top3.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 fig_scatter_top3.update_layout(
-    xaxis_title="영화명",
-    yaxis_title="총 관객 수",
-    xaxis={"categoryorder": "total descending"},
+    showlegend=False,
+    height=max(400, 25 * df_top3_genre["genre"].value_counts().max()),
 )
 
 st.plotly_chart(fig_scatter_top3, use_container_width=True)
