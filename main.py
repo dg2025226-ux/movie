@@ -219,31 +219,32 @@ st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 st.divider()
 
 # ------------------------------------------------------------
-# 8. 장르 top3 - 막대 그래프 (영화명, 총 관객 포함)
+# 8. 장르 top3 - 산점도 (영화명, 총 관객 포함)
 # ------------------------------------------------------------
-st.header("8. 영화 편수 상위 3개 장르의 영화별 총 관객 (막대 그래프)")
+st.header("8. 영화 편수 상위 3개 장르의 영화별 총 관객 (산점도)")
 
 top3_genres = df["genre"].value_counts().head(3).index.tolist()
 df_top3_genre = df[df["genre"].isin(top3_genres)].sort_values(
     ["genre", "total_audi"], ascending=[True, False]
 )
 
-fig_bar_top3 = px.bar(
+fig_scatter_top3 = px.scatter(
     df_top3_genre,
     x="movieNm",
     y="total_audi",
     color="genre",
 )
-fig_bar_top3.update_traces(
+fig_scatter_top3.update_traces(
+    marker=dict(size=12),
     hovertemplate="영화명: %{x}<br>총 관객: %{y:,}명<extra></extra>",
 )
-fig_bar_top3.update_layout(
+fig_scatter_top3.update_layout(
     xaxis_title="영화명",
     yaxis_title="총 관객 수",
     xaxis={"categoryorder": "total descending"},
 )
 
-st.plotly_chart(fig_bar_top3, use_container_width=True)
+st.plotly_chart(fig_scatter_top3, use_container_width=True)
 
 st.markdown("**🔍 이 그래프로 알 수 있는 것:** ")
 
